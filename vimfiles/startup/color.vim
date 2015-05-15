@@ -7,7 +7,7 @@
 
 if has('gui_running')
    set guioptions-=T
-   color monochrome
+   color phoenix
 else
    color slate
    hi CursorLine   cterm=NONE ctermbg=3 ctermfg=0

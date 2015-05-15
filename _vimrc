@@ -1,3 +1,6 @@
+set encoding=utf-8
+scriptencoding utf-8
+
 "Pathogen
 call pathogen#infect()
 
@@ -16,4 +19,4 @@ source ~/vimfiles/startup/mappings.vim
 source ~/vimfiles/startup/color.vim
 source ~/vimfiles/startup/settings.vim
 
-" ActivateAddons snippets snipmate
+set laststatus=2
