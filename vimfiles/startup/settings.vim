@@ -1,6 +1,6 @@
 "========== General Settings ==========
 set wildmenu
-
+   
 "============== Backspace =================
 set nocompatible
 set backspace=2
@@ -8,26 +8,35 @@ set nu
 set cursorline
 set list listchars=tab:»·,trail:-,extends:>,precedes:<,eol:¬
 
-
-" for Airline
-" let g:airline_right_alt_sep = ''
-" let g:airline_right_sep = ''
-" let g:airline_left_alt_sep= ''
-" let g:airline_left_sep = ''
+if has('gui_running')
+   set lines=60 columns=140
+endif
 
 if has('gui_running')
    set guifont=Inconsolata\ for\ Powerline:h11
    let g:lightline = {
          \ 'colorscheme': 'wombat',
          \ 'active': {
-         \   'left': [ [ 'mode', 'paste' ],
-         \             [ 'fugitive', 'filename' ] ]
+         \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename'] ],
+         \   'right': [ [ 'trailingWhitespace', 'mytabs', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
          \ },
          \ 'component_function': {
-         \   'fugitive': 'MyFugitive',
-         \   'readonly': 'MyReadonly',
-         \   'modified': 'MyModified',
-         \   'filename': 'MyFilename'
+         \     'fugitive': 'MyFugitive',
+         \     'readonly': 'MyReadonly',
+         \     'modified': 'MyModified',
+         \     'filename': 'MyFilename',
+         \        'mode' : 'MyMode',
+         \   'fileformat': 'MyFileformat',
+         \     'filetype': 'MyFiletype',
+         \ 'fileencoding': 'MyFileencoding',
+         \ },
+         \ 'component_expand': {
+         \   'mytabs': 'MyTabs',
+         \ 'trailingWhitespace' : 'MyTrailingWhitespace',
+         \ },
+         \ 'component_type': {
+         \   'mytabs': 'warning',
+         \  'trailingWhitespace' : 'error',
          \ },
          \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
          \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
@@ -42,6 +51,7 @@ else
       \ 'subseparator': { 'left': '|', 'right': '|' }
       \ }
 endif
+
 function! MyModified()
   if &filetype == "help"
     return ""
@@ -73,7 +83,56 @@ function! MyFugitive()
 endfunction
 
 function! MyFilename()
-  return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+  let fname = expand('%:t')
+  return fname =~ 'NERD_tree' ? '' :
+       \ ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
        \ ('' != expand('%:t') ? expand('%:t') : '[No Name]') .
        \ ('' != MyModified() ? ' ' . MyModified() : '')
 endfunction
+
+function! MyMode()
+  let fname = expand('%:t')
+  return fname =~ 'NERD_tree' ? 'NERDTree' :
+        \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+function! MyFileformat()
+  let fname = expand('%:t')
+  return fname =~ 'NERD_tree' ? '' :
+        \ winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! MyFiletype()
+  let fname = expand('%:t')
+  return fname =~ 'NERD_tree' ? '' :
+        \ winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction
+
+function! MyFileencoding()
+  let fname = expand('%:t')
+  return fname =~ 'NERD_tree' ? '' :
+        \ winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! MyTabs()
+   let line = search('\t', 'n')
+   if line != 0
+      return 'Tabs:' . line
+   else
+      return ''
+   endif
+endfunction
+
+function! MyTrailingWhitespace()
+   let line = search('\s\+$', 'n')
+   if line != 0
+      return 'Trailing Whitespace:' . line
+   else
+      return ''
+   endif
+endfunction
+
+augroup AutoErrors
+   autocmd!
+   autocmd BufWritePost * call lightline#update()
+augroup END

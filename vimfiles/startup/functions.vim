@@ -1,6 +1,7 @@
 "========= Custom Functions =========
 fun! Format_WhiteSpace_RemoveTrailing()
    :%s/\v\s*$//g
+   '' " Ctrl-O
 endfun
 
 fun! Format_Inflection_ToCamelCase()
