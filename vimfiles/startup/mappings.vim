@@ -33,3 +33,6 @@ map <C-n> :NERDTreeToggle<CR>
 
 " Mappings to functions in functions.vim
 nmap <leader>t :call Format_WhiteSpace_RemoveTrailing()<CR>
+
+nmap <leader><leader>c :call Format_Inflection_ToCamelCase()<CR>
+nmap <leader><leader>u :call Format_Inflection_ToUnderscored()<CR>

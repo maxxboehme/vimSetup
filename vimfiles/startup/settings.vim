@@ -1,6 +1,6 @@
 "========== General Settings ==========
 set wildmenu
-   
+
 "============== Backspace =================
 set nocompatible
 set backspace=2
@@ -18,7 +18,7 @@ if has('gui_running')
          \ 'colorscheme': 'wombat',
          \ 'active': {
          \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename'] ],
-         \   'right': [ [ 'trailingWhitespace', 'mytabs', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+         \   'right': [ [ 'lineinfo', 'syntastic', 'trailingWhitespace', 'mytabs'], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
          \ },
          \ 'component_function': {
          \     'fugitive': 'MyFugitive',
@@ -33,10 +33,12 @@ if has('gui_running')
          \ 'component_expand': {
          \   'mytabs': 'MyTabs',
          \ 'trailingWhitespace' : 'MyTrailingWhitespace',
+         \   'syntastic': 'SyntasticStatuslineFlag',
          \ },
          \ 'component_type': {
          \   'mytabs': 'warning',
          \  'trailingWhitespace' : 'error',
+         \   'syntastic': 'error',
          \ },
          \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
          \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
@@ -132,7 +134,22 @@ function! MyTrailingWhitespace()
    endif
 endfunction
 
-augroup AutoErrors
+augroup AutoSyntastic
+  autocmd!
+  autocmd BufWritePost *.c,*.cpp call s:syntastic()
+augroup END
+function! s:syntastic()
+  SyntasticCheck
+  call lightline#update()
+endfunction
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_cpp_compiler_options = '-Wall'
+
+augroup MyAutoErrorsWarnings
    autocmd!
    autocmd BufWritePost * call lightline#update()
 augroup END
+
+set guioptions-=L
